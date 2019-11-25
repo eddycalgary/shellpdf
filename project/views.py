@@ -14,9 +14,9 @@ def HOME(request):
     if request.method=="GET":
         date = datetime.date(datetime.now())
         current_user = request.user
-        return render(request, '/home.html', {"TEST": "User: ", "user1": current_user, "time": date, 'user': ""})
+        return render(request, 'home.html', {"TEST": "User: ", "user1": current_user, "time": date, 'user': ""})
 
-    return render(request, '/login.html')
+    return render(request, 'login.html')
 
 @login_required
 def contact(request):
@@ -82,13 +82,13 @@ def login_views(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return render(request, '/home.html', {'user': user, "time": date, "message": "; You have sucessfully logged in!!"})
+            return render(request, 'home.html', {'user': user, "time": date, "message": "; You have sucessfully logged in!!"})
 
     else:
         date = datetime.date(datetime.now())
         form = AuthenticationForm()
 
-    return render(request, "/login.html", {'form': form, "time": date})
+    return render(request, "login.html", {'form': form, "time": date})
 
 def logout_views(request):
     if request.method=="POST":

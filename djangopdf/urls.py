@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path
 from djangopdf.project import views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HOME.as_view(), name='home'),

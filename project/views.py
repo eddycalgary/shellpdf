@@ -87,7 +87,7 @@ def login_views(request):
         date = datetime.date(datetime.now())
         form = AuthenticationForm()
 
-    return render(request, "login.html", {'form': form, "time": date})
+    return render(request, "project/login.html", {'form': form, "time": date})
 
 def logout_views(request):
     if request.method=="POST":

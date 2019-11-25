@@ -14,9 +14,9 @@ def HOME(request):
     if request.method=="GET":
         date = datetime.date(datetime.now())
         current_user = request.user
-        return render(request, 'home.html', {"TEST": "User: ", "user1": current_user, "time": date, 'user': ""})
+        return render(request, 'project/Templates/home.html', {"TEST": "User: ", "user1": current_user, "time": date, 'user': ""})
 
-    return render(request, 'login.html')
+    return render(request, 'project/Templates/login.html')
 
 @login_required
 def contact(request):

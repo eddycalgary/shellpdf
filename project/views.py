@@ -82,7 +82,7 @@ def login_views(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return render(request, 'home.html', {'user': user, "time": date, "message": "; You have sucessfully logged in!!"})
+            return render(request, 'project/Templates/home.html', {'user': user, "time": date, "message": "; You have sucessfully logged in!!"})
     else:
         date = datetime.date(datetime.now())
         form = AuthenticationForm()

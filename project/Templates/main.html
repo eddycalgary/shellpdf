@@ -1,0 +1,33 @@
+{%  extends 'base_layout.html' %}
+
+{% block content %}
+<div>
+    <h2 id="titulo" align="center">PDF Fracking Analysis</h2>
+</div>
+
+<div align="right" id="logout">
+   <form class="logout-link" action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button class="button button5" type="submit">Logout</button>
+    </form>
+    <br>
+<div id='test' align="right">
+    <form method="get" action="{% url 'home' %}">
+        <button style="align-content: baseline" class="button button5" type="submit">Home</button>
+    </form>
+</div>
+</div>
+<div>
+    <!-- <h5 align="right"><a href="{% url 'home' %}" style="align-content: center" >HOME</a></h5>
+     <img style="border: 0"; src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtSBz1QtfRulN78UnDOpxcHglAMlZdaPZVP7Rf6kWY8EA5h7KX&s" width="200" height="120" alt="Computer Hope" align="middle"> -->
+</div>
+
+<h4 align="center">{{ TEST2 }}</h4>
+    <br>
+    <br>
+    <div>
+        <h4 align="center"> Number of tables to verify: {{ SIZE }}</h4>
+    </div>
+    <br>
+    <h7 align="center" size="50" id="result">{{ content | safe }}</h7>
+{% endblock %}

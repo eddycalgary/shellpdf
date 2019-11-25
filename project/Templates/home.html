@@ -1,0 +1,61 @@
+{% extends 'base_layout.html'%}
+
+    {% block content %}
+<div id="sidebar">
+    <div class="toggle-btn" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <ul>
+        <li>Project 1</li>
+        <li>Project 2</li>
+        <li>Project 3</li>
+    </ul>
+</div>
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle('active');
+        }
+    </script>
+
+<div>
+    <h2 id="titulo" align="center">PDF Fracking Analysis</h2>
+</div>
+<div align="right" id="logout">
+   <form class="logout-link" action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button class="button button5" type="submit">Logout</button>
+    </form>
+    <br>
+</div>
+<div id="user-info">
+    <header class="wrapper">
+
+        <!--<h1 align="right"><a href="{% url 'home' %}"><img src="" alt=""></a></h1>-->
+        <h3>{{ user1 }}</h3>
+        <h3>{{ user }}{{ message }}</h3>
+        <h6> {{ time }}</h6>
+    </header>
+
+    <br>
+    <form action="{% url 'main' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="document" accept="pdf" multiple>
+        <label>Select vendor: </label>
+        <select name="Vendors">
+            <option value="None">None</option>
+            <option value="Liberty">Liberty</option>
+            <option value="WPX">WPX</option>
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="Upload">
+    </form>
+    </div>
+    <br>
+    <br>
+        
+
+    {% endblock %}
+

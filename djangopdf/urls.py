@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from djangopdf.project import views
+from project import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.HOME.as_view(), name='home'),
+    path('', views.HOME, name='home'),
     path('signup/', views.signup_views, name='signup'),
     path('contact/', views.contact, name='contact'),
     path('main/', views.upload, name='main'),

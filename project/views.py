@@ -46,16 +46,26 @@ def upload(request):
     column = pd.DataFrame(columns=list)
 
     if request.method=='POST' and request.POST.get('Vendors') != "None":
-        file2 = request.POST.get('Vendors')
-        print(file2)
-        file1 = request.FILES.getlist("document")
-        d=0
-        for x in file1:
-            df1 = tabula.read_pdf(x, lattice=True, pages='all', multiple_tables=True)
-            df2 = Vendor_Liberty_doc(df1, d)
-            d+=1
-        #xw.Book().sheets[0].range('A1').value = df2
-        return render(request, 'main.html', {"content": df2.to_html, "SIZE": len(file1)})
+        if request.POST.get('Vendors')=='Liberty':
+            file2 = request.POST.get('Vendors')
+            file1 = request.FILES.getlist("document")
+            d=0
+            for x in file1:
+                df1 = tabula.read_pdf(x, lattice=True, pages='all', multiple_tables=True)
+                df2 = Vendor_Liberty_doc(df1, d)
+                d+=1
+                #xw.Book().sheets[0].range('A1').value = df2
+            return render(request, 'main.html', {"content": df2.to_html, "SIZE": len(file1), 'name': x.name})
+        elif request.POST.get('Vendors')=='WPX':
+            file1 = request.FILES.getlist("document")
+            d=0
+            for x in file1:
+                df1 = tabula.read_pdf(x, lattice=True, pages='all', multiple_tables=True)
+                print(x.name)
+                df2 = Vendor_WPX(df1, d, str(x.name))
+                d+=1
+            return render(request, 'main.html', {"content": df2.to_html, "SIZE": len(file1)})
+
     else:
         return render(request, 'main.html', {"content": "No vendor was selected"})
 
@@ -83,7 +93,6 @@ def login_views(request):
             user = form.get_user()
             login(request, user)
             return render(request, 'home.html', {'user': user, "time": date, "message": "; You have sucessfully logged in!!"})
-
     else:
         date = datetime.date(datetime.now())
         form = AuthenticationForm()
@@ -147,3 +156,69 @@ def Vendor_Liberty_doc(doc, axis):
         else:
             continue
     return column
+
+def Vendor_WPX(Folder, index, name):
+    #t=0
+    print(name)
+
+    #df1=tabula.read_pdf(doc, lattice=True, pages = '1-3', multiple_tables=True)
+    for d in Folder:
+        if len(d) !=0 and len(d.index) > 6 and len(d.columns) > 6:
+            index_value = First_ValueIndex(d)  # run function to find index value
+            tableType = Table_type(d)  # find if first or second table
+            if tableType == 'First':
+                FirstTable(d, index_value, index, name)
+                continue
+            elif tableType == 'Second':
+                SecondTable(d, index_value, index, name)
+                break
+        else:
+            continue
+    return column.sort_values(by=['Stage'])
+
+def First_ValueIndex(df):
+    Index = df.iloc[:,0].first_valid_index()
+    return Index
+
+def FirstTable(df, index,j, title):
+    docName = name(title)
+    table1 = df.iloc[index:,0:]
+    table2 = table1.dropna(thresh=len(table1)-2, axis=1)
+    table2 = table2.iloc[:,[2,9]].astype(float)
+    total_slurry = round(table2.iloc[:,0].sum())
+    total_propant= round(table2.iloc[:,1].sum())
+    column.loc[j, 'Total Slurry Treatment Volume']= total_slurry
+    column.loc[j, 'Stage']= docName
+    column.loc[j, 'Total Stage Proppant']= total_propant
+
+def SecondTable(df, index, j, name):
+    table2 = df.iloc[index:,0:]
+    table3 = table2.dropna(thresh=len(table2)-2, axis=1)
+    table3 = table3.reset_index(drop=True)
+    cf = table3.loc[table3.iloc[:,1]=='PAD'].index[0]
+    table3 = table3.iloc[:,[2,3,4,5]].astype(float)
+    Max_wellheadPressure= table3.iloc[:,3].max()
+    Ave_wellheadPressure= table3.iloc[cf+1:,2].mean()
+    Max_treatingRate    = table3.iloc[:,1].max()
+    Ave_treatingRate    = table3.iloc[cf+1:,0].mean()
+    column.loc[j, 'Maximum Wellhead Pressure']= Max_wellheadPressure
+    column.loc[j, 'Average Wellhead Pressure']= Ave_wellheadPressure
+    column.loc[j, 'Average Wellhead Rate']    = Ave_treatingRate
+    column.loc[j, 'Maximum Wellhead Rate']    = Max_treatingRate
+    column.loc[j, 'Document']= name
+
+def Table_type(df):
+    x1 = df.iloc[0:3,0:4]
+    for each_row in df.iterrows():
+        if 'Stage Pressu' in str(each_row):
+            table = 'Second'
+            return table
+        elif 'As Measur' in str(each_row):
+            table = 'First'
+            return table
+
+def name(doc):
+    test1 = doc.find('Stage')
+    test2 = doc.find('.p')
+    result = doc[test2-2:test2]
+    return result

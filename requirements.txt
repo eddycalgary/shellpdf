@@ -1,6 +1,6 @@
 distro==1.4.0
 dj-database-url==0.5.0
-Django==2.2.7
+Django==2.2.27
 django-environ==0.4.5
 django-heroku==0.3.1
 environ==1.0
